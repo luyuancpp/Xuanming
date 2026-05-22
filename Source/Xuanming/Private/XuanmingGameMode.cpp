@@ -5,6 +5,7 @@
 #include "XuanmingPlayerController.h"
 #include "XuanmingPlayerState.h"
 #include "XuanmingCharacter.h"
+#include "XuanmingHUD.h"
 
 AXuanmingGameMode::AXuanmingGameMode()
 {
@@ -13,6 +14,7 @@ AXuanmingGameMode::AXuanmingGameMode()
 	PlayerControllerClass = AXuanmingPlayerController::StaticClass();
 	PlayerStateClass = AXuanmingPlayerState::StaticClass();
 	DefaultPawnClass = AXuanmingCharacter::StaticClass();
+	HUDClass = AXuanmingHUD::StaticClass();
 
 	// 服务器 tick 频率
 	bUseSeamlessTravel = true;
