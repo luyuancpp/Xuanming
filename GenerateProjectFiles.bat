@@ -1,7 +1,7 @@
 @echo off
+chcp 65001 > nul
 REM ============================================================
 REM  Xuanming - Generate Visual Studio Project Files
-REM  生成 VS 工程文件（每次新增 C++ 类或改 .uproject 后跑一次）
 REM ============================================================
 setlocal
 

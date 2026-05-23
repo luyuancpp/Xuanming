@@ -1,8 +1,9 @@
 @echo off
+chcp 65001 > nul
 REM ============================================================
-REM  Xuanming - Build & Cook Linux Dedicated Server
-REM  打包 Linux DS，可直接部署到 Linux 服务器
-REM  前置：需安装 Linux 交叉编译工具链
+REM  Xuanming - Build and Cook Linux Dedicated Server
+REM  Build Linux DS, can be deployed to Linux servers directly
+REM  Prerequisite: install Linux cross-compile toolchain
 REM  https://dev.epicgames.com/documentation/zh-cn/unreal-engine/linux-development-requirements-for-unreal-engine
 REM ============================================================
 setlocal
@@ -12,7 +13,6 @@ set PROJECT_FILE=%~dp0Xuanming.uproject
 set OUTPUT_DIR=%~dp0Build\LinuxServer
 set CONFIG=Development
 
-REM 检查交叉编译工具链
 if "%LINUX_MULTIARCH_ROOT%"=="" (
     echo [Xuanming] WARNING: LINUX_MULTIARCH_ROOT not set.
     echo Please install the Linux Toolchain from:

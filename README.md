@@ -195,6 +195,33 @@ F:\work\UnrealEngine\Engine\Build\BatchFiles\RunUAT.bat ^
 ### "CoreMinimal.h not found" 红色波浪线
 clang 静态分析器看不到 UE 头文件路径，**不影响实际编译**。跑 `GenerateProjectFiles.bat` 后用 VS 打开 `.sln` 编译即可。
 
+### .bat 双击执行报 "'al' 不是内部或外部命令" + 乱码
+原因：.bat 是 UTF-8 编码但 Windows CMD 默认 GBK，注释里的中文被当成命令执行。
+**已修复**：所有 .bat 顶部加了 `chcp 65001 > nul`，注释也都换成英文。
+
+### GenerateProjectFiles 报 "error CS1525: Invalid expression term '['"
+原因：UE 5.7 的 `.Build.cs` 用了 C# 12 集合表达式 `[...]`，需要 **.NET 8 SDK**。
+你拉下来的源码版引擎自带的 `UnrealBuildTool.exe` 可能是 net6.0 编译的旧版本。
+
+**解决方案**：
+1. 安装 .NET 8 SDK：`winget install Microsoft.DotNet.SDK.8`
+2. 在引擎根目录（`F:/work/UnrealEngine`）放 `global.json`：
+   ```json
+   {
+     "sdk": {
+       "version": "8.0.100",
+       "rollForward": "latestFeature"
+     }
+   }
+   ```
+3. 跑 `Setup.bat` 拉依赖（必做，否则 EpicGames.Horde 编不过）
+4. 用引擎根目录的 `GenerateProjectFiles.bat`（不是项目里的）跑一次，强制重新编译 UBT
+5. 之后再跑项目的 `GenerateProjectFiles.bat`
+
+### "EpicGames.Horde.dll" 找不到 / `Protos\horde\log_rpc.proto` 缺失
+原因：Setup.bat 没跑过，二进制依赖没下载。
+**解决**：在引擎根跑 `Setup.bat` 或直接调用 `Engine/Binaries/DotNET/GitDependencies/win-x64/GitDependencies.exe --force`
+
 ### "Engine association not found"
 `.uproject` 里的 `EngineAssociation` 指向 `F:/work/UnrealEngine`。如果引擎路径变了，手动修改这一行。
 

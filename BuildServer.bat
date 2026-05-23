@@ -1,7 +1,7 @@
 @echo off
+chcp 65001 > nul
 REM ============================================================
 REM  Xuanming - Build Dedicated Server (Win64 Development)
-REM  编译 DS 二进制（Win64 开发版，跨平台部署 Linux 见 README）
 REM ============================================================
 setlocal
 

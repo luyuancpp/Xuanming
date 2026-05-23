@@ -1,7 +1,7 @@
 @echo off
+chcp 65001 > nul
 REM ============================================================
-REM  Xuanming - Build & Cook Win64 Dedicated Server (Shipping)
-REM  打包 Win64 DS，Shipping 配置，可用于上线
+REM  Xuanming - Build and Cook Win64 Dedicated Server (Shipping)
 REM ============================================================
 setlocal
 

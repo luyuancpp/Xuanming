@@ -1,7 +1,7 @@
 @echo off
+chcp 65001 > nul
 REM ============================================================
 REM  Xuanming - Build Editor (for opening project in editor)
-REM  编译 Editor target，编辑器开发用
 REM ============================================================
 setlocal
 

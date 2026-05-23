@@ -1,7 +1,7 @@
 @echo off
+chcp 65001 > nul
 REM ============================================================
 REM  Xuanming - Build Client (Win64 Development)
-REM  编译客户端二进制
 REM ============================================================
 setlocal
 

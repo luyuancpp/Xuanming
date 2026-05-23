@@ -1,7 +1,7 @@
 @echo off
+chcp 65001 > nul
 REM ============================================================
 REM  Xuanming - Launch Dedicated Server (Local Test)
-REM  本地启动 DS 进行联调
 REM ============================================================
 setlocal
 
