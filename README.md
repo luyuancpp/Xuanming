@@ -215,8 +215,15 @@ clang 静态分析器看不到 UE 头文件路径，**不影响实际编译**。
    }
    ```
 3. 跑 `Setup.bat` 拉依赖（必做，否则 EpicGames.Horde 编不过）
-4. 用引擎根目录的 `GenerateProjectFiles.bat`（不是项目里的）跑一次，强制重新编译 UBT
-5. 之后再跑项目的 `GenerateProjectFiles.bat`
+   - 如果 Setup.bat 没反应，直接调：
+     `Engine\Binaries\DotNET\GitDependencies\win-x64\GitDependencies.exe --force --threads=8`
+4. 用系统 .NET 8 重新编译 UBT：
+   ```cmd
+   cd F:\work\UnrealEngine\Engine\Source\Programs\UnrealBuildTool
+   dotnet build UnrealBuildTool.csproj -c Development
+   ```
+5. 项目根的 `GenerateProjectFiles.bat` 已改为优先使用新编 UBT
+   (`bin\Development\UnrealBuildTool.dll`)，直接双击即可。
 
 ### "EpicGames.Horde.dll" 找不到 / `Protos\horde\log_rpc.proto` 缺失
 原因：Setup.bat 没跑过，二进制依赖没下载。
