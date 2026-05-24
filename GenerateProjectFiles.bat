@@ -67,9 +67,12 @@ if not exist "%UBT_DLL%" (
 )
 
 REM ---- Step 4: generate VS project files ----
-echo [Xuanming] Step 4/4: Generating Visual Studio project files...
+REM  VS_VERSION can be: 2022, 2026 (defaults to 2026 since user is on VS2026)
+REM  Override with: set VS_VERSION=2022 && GenerateProjectFiles.bat
+if "%VS_VERSION%"=="" set VS_VERSION=2026
+echo [Xuanming] Step 4/4: Generating Visual Studio %VS_VERSION% project files...
 pushd "%PROJECT_ROOT%"
-dotnet "%UBT_DLL%" -projectfiles -project="%PROJECT_FILE%" -game -rocket -progress
+dotnet "%UBT_DLL%" -projectfiles -project="%PROJECT_FILE%" -game -rocket -progress -%VS_VERSION%
 set GEN_RC=%ERRORLEVEL%
 popd
 
