@@ -69,15 +69,15 @@ void AXuanmingWeapon::HandleFire()
 		return;
 	}
 
-	AXuanmingCharacter* Owner = GetOwnerCharacter();
-	if (!Owner)
+	AXuanmingCharacter* OwnerChar = GetOwnerCharacter();
+	if (!OwnerChar)
 	{
 		return;
 	}
 
 	// 视线起点和方向
-	const FVector EyeLoc = Owner->GetEyeLocation();
-	const FRotator EyeRot = Owner->GetEyeRotation();
+	const FVector EyeLoc = OwnerChar->GetEyeLocation();
+	const FRotator EyeRot = OwnerChar->GetEyeRotation();
 	FVector AimDir = EyeRot.Vector();
 
 	// 散布
@@ -92,7 +92,7 @@ void AXuanmingWeapon::HandleFire()
 	CurrentAmmo = FMath::Max(0, CurrentAmmo - 1);
 
 	// 真实命中判定走服务器
-	if (Owner->IsLocallyControlled())
+	if (OwnerChar->IsLocallyControlled())
 	{
 		Server_Fire(EyeLoc, AimDir);
 	}
@@ -125,9 +125,9 @@ void AXuanmingWeapon::Server_Fire_Implementation(const FVector& EyeLocation, con
 	{
 		FPointDamageEvent DamageEvent(Damage, Hit, AimDirection, nullptr);
 		AController* InstigatorController = nullptr;
-		if (AXuanmingCharacter* Owner = GetOwnerCharacter())
+		if (AXuanmingCharacter* OwnerChar = GetOwnerCharacter())
 		{
-			InstigatorController = Owner->GetController();
+			InstigatorController = OwnerChar->GetController();
 		}
 		Hit.GetActor()->TakeDamage(Damage, DamageEvent, InstigatorController, this);
 	}
@@ -140,9 +140,9 @@ void AXuanmingWeapon::Multicast_PlayFireFX_Implementation(const FVector& HitLoca
 	// TODO: 播放枪口火光、弹道光束、命中粒子
 	// 现在只画调试线，方便联调
 #if !UE_BUILD_SHIPPING
-	if (AXuanmingCharacter* Owner = GetOwnerCharacter())
+	if (AXuanmingCharacter* OwnerChar = GetOwnerCharacter())
 	{
-		const FVector Start = Owner->GetEyeLocation();
+		const FVector Start = OwnerChar->GetEyeLocation();
 		DrawDebugLine(GetWorld(), Start, HitLocation,
 			bHit ? FColor::Red : FColor::Yellow, false, 0.5f, 0, 1.0f);
 	}
