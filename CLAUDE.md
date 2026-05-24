@@ -63,7 +63,9 @@ Source/Xuanming/
 ## 构建工具链
 
 ### 必装环境
-- **Visual Studio 2022**（C++ 游戏开发工作负载）
+- **Visual Studio 2026**（C++ 游戏开发工作负载）—— 用户实测可用，UE 5.7.4 release 内部已识别 VS18 toolchain（`MSVC 14.44.x`）
+  - 也可用 VS2022，切换方式：`set VS_VERSION=2022 && GenerateProjectFiles.bat`
+  - **不要**编整个解决方案，VS2026 下引擎自带的 `SlateViewer` / Catch2 测试会失败（与项目无关），右键单独编 `Xuanming` 项目即可
 - **.NET 8 SDK**（必须，UE 5.7 的 .Build.cs 用了 C# 12 集合表达式 `[...]`）
   - 安装：`winget install Microsoft.DotNet.SDK.8`
   - .NET 10 / .NET 9 都不行
@@ -160,6 +162,10 @@ UE 5.7.4 release 自带的 `Engine/Binaries/DotNET/UnrealBuildTool/UnrealBuildTo
 | UE 自带 .NET 8.0.412 在 Windows 缺 host/fxr 目录 | 不用它，用系统的 .NET 8 SDK（项目级 global.json 锁定 8.0.100） |
 | `git reset --hard origin/release` 会丢失本地未推送 commit | 先 `git reflog` 找回；这次没造成永久损失 |
 | UE 5.7.4 release csproj 引用 props 文件但仓库里没有 | GitDependencies 会拉，但必须等它完整跑完（30 分钟+） |
+| VS2026 下编整个解决方案有 13 个失败（Catch2 测试 / SlateViewer / AutoRTFMTests） | 引擎自带工具问题，**与项目无关**；右键只编 `Xuanming` 项目，自动按依赖带上 UnrealEditor |
+| Target.cs 用 `BuildSettingsVersion.V5` 编 Editor 报 `XuanmingEditor modifies the values of properties` | UE 5.7 默认 V6，必须升级所有 4 个 Target.cs 到 V6 |
+| V6 升级后 `error C4458: "Owner"的声明隐藏了类成员` | 局部变量名和 `AActor::Owner` 冲突；改为 `OwnerChar` 等明确名字 |
+| 启动 Editor 崩在 `FDerivedDataBackendGraph` 行 217 | ZenServer HTTP 服务在 `[::1]` 起不来；用 `-ddc=NoZenLocalFallback` 禁掉 Zen，走文件系统 DDC。已封装在 `LaunchEditor.bat` 里 |
 
 ## 用户偏好
 
