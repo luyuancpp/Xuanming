@@ -261,6 +261,9 @@ M1.5 GAS 框架 + 玄冥冰咒示例技能           3-5 天
 | Target.cs 用 `BuildSettingsVersion.V5` 编 Editor 报 `XuanmingEditor modifies the values of properties` | UE 5.7 默认 V6，必须升级所有 4 个 Target.cs 到 V6 |
 | V6 升级后 `error C4458: "Owner"的声明隐藏了类成员` | 局部变量名和 `AActor::Owner` 冲突；改为 `OwnerChar` 等明确名字 |
 | 启动 Editor 崩在 `FDerivedDataBackendGraph` 行 217 | ZenServer HTTP 服务在 `[::1]` 起不来；用 `-ddc=NoZenLocalFallback` 禁掉 Zen，走文件系统 DDC。已封装在 `LaunchEditor.bat` 里 |
+| 真 DS 模式 (LaunchServer.bat) WASD 不响应，PIE 多人正常 | `GlobalDefaultServerGameMode` 必须也指向 BP_GameMode；之前还是 C++ 裸类导致 DS 端 PC/Pawn 都是 C++ 裸类，蓝图层 IA 字段全 nullptr |
+| EnhancedInput IMC 注册在 DS+Client 模式失败 | `BeginPlay` 时 ULocalPlayer 未就绪；改用 `AcknowledgePossession`（client）+ `OnPossess`（ListenServer）三时机兜底注册 |
+| Python 创建的 UE 对象（modifier 等）保存后丢失 | `unreal.new_object(Class)` 默认 outer = `/Engine/Transient/`，序列化时被丢弃。**必须**传 `outer=父资产`，例如 `unreal.new_object(InputModifierNegate, outer=imc)`，对象才会作为父资产子对象持久化 |
 
 ## 用户偏好
 
