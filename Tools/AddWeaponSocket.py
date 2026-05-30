@@ -76,14 +76,16 @@ def main():
     # 运行时 attach 也会失败并记 LogAnimation 警告，很容易诊断。
     print(f"[3/5] （跳过骨骼校验，UE5 Python 没暴露 find_bone_index）")
 
-    # 构造 socket，outer 必须是 Skeleton（不然 add_socket(bAddToSkeleton=True) 会复制一份新的）
+    # 构造 socket。所有字段都是 BlueprintReadOnly + EditAnywhere：
+    #   - set_editor_property 走 BP 可写性检查，会被拒
+    #   - 直接 Python attribute 赋值走 PropertyAccessUtil 的 EditorWrite，UE 5.7 支持
     print(f"[4/5] 创建 {SOCKET_NAME} 挂到 {PARENT_BONE}")
     socket = unreal.SkeletalMeshSocket(skeleton)
-    socket.set_editor_property("socket_name", SOCKET_NAME)
-    socket.set_editor_property("bone_name", PARENT_BONE)
-    socket.set_editor_property("relative_location", SOCKET_LOCATION)
-    socket.set_editor_property("relative_rotation", SOCKET_ROTATION)
-    socket.set_editor_property("relative_scale", SOCKET_SCALE)
+    socket.socket_name = SOCKET_NAME
+    socket.bone_name = PARENT_BONE
+    socket.relative_location = SOCKET_LOCATION
+    socket.relative_rotation = SOCKET_ROTATION
+    socket.relative_scale = SOCKET_SCALE
 
     # 加进 Mesh，b_add_to_skeleton=True 同时写到 Skeleton
     # 这样所有共享 SK_Mannequin 的 mesh（SKM_Quinn_Simple 等）也能用
