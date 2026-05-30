@@ -5,7 +5,7 @@ Xuanming - 给 SK_Mannequin 加 WeaponSocket（M1.3）
   Tools -> Execute Python Script -> 选 Tools/AddWeaponSocket.py
 
 做的事:
-  1. 加载 SK_Mannequin
+  1. 加载 SK_Mannequin（USkeleton 资产，UE5 Manny 命名约定）
   2. 检查是否已经存在 WeaponSocket（幂等：有就跳过，不重复加）
   3. 在 hand_r 骨骼上加一个 SkeletalMeshSocket，名字 = WeaponSocket
   4. 给一个对 FPS 持枪比较合适的相对偏移（之后可在 Editor 里 Socket 编辑器微调）
@@ -13,6 +13,10 @@ Xuanming - 给 SK_Mannequin 加 WeaponSocket（M1.3）
 
 C++ 端 SpawnDefaultWeapon() 里写死了 AttachToComponent(GetMesh(), ..., "WeaponSocket")，
 所以名字必须就是 "WeaponSocket"。
+
+UE5 Manny 资产命名约定:
+  SK_Mannequin       = USkeleton（骨架，sockets 真正挂这里）
+  SKM_Manny_Simple   = USkeletalMesh（蒙皮网格，引用 Skeleton）
 
 参考骨骼名:
   UE5 Mannequin 的右手骨骼 = "hand_r"
@@ -25,7 +29,11 @@ C++ 端 SpawnDefaultWeapon() 里写死了 AttachToComponent(GetMesh(), ..., "Wea
 import unreal
 
 
-SK_MANNEQUIN_PATH = "/Game/Characters/Mannequins/Meshes/SK_Mannequin"
+# 注意：UE5 资产命名约定
+#   SK_Mannequin       = USkeleton（骨架资产，sockets 挂这里）
+#   SKM_Manny_Simple   = USkeletalMesh（蒙皮网格，引用上面的 Skeleton）
+# WeaponSocket 必须挂在 Skeleton 上（所有用同一 Skeleton 的 Mesh 共享）。
+SKELETON_PATH = "/Game/Characters/Mannequins/Meshes/SK_Mannequin"
 SOCKET_NAME = "WeaponSocket"
 PARENT_BONE = "hand_r"
 
@@ -37,20 +45,18 @@ SOCKET_SCALE    = unreal.Vector(1.0, 1.0, 1.0)
 
 def main():
     print("=" * 60)
-    print(f"[Xuanming] 给 SK_Mannequin 加 {SOCKET_NAME}")
+    print(f"[Xuanming] 给 SK_Mannequin (Skeleton) 加 {SOCKET_NAME}")
     print("=" * 60)
 
-    sk = unreal.EditorAssetLibrary.load_asset(SK_MANNEQUIN_PATH)
-    if sk is None:
-        raise RuntimeError(f"找不到 {SK_MANNEQUIN_PATH}")
-    print(f"[1/4] 加载 SK_Mannequin: {sk.get_path_name()}")
-
-    # SkeletalMeshSocket 实际挂在 Skeleton 资产上（多个 mesh 共享）
-    # UE5: USkeletalMesh.skeleton 字段
-    skeleton = sk.get_editor_property("skeleton")
+    skeleton = unreal.EditorAssetLibrary.load_asset(SKELETON_PATH)
     if skeleton is None:
-        raise RuntimeError("SK_Mannequin 没有 Skeleton？")
-    print(f"      关联 Skeleton: {skeleton.get_path_name()}")
+        raise RuntimeError(f"找不到 {SKELETON_PATH}")
+    if not isinstance(skeleton, unreal.Skeleton):
+        raise RuntimeError(
+            f"{SKELETON_PATH} 不是 USkeleton（type={type(skeleton).__name__}）。"
+            "UE5 Manny 命名约定: SK_Mannequin=Skeleton, SKM_Manny_Simple=SkeletalMesh"
+        )
+    print(f"[1/4] 加载 Skeleton: {skeleton.get_path_name()}")
 
     # 幂等检查：sockets 数组里是否已经有 WeaponSocket
     existing = skeleton.get_editor_property("sockets") or []
