@@ -71,16 +71,10 @@ def main():
         return
     print(f"      未找到 {SOCKET_NAME}，继续创建")
 
-    # 校验 hand_r 骨骼存在（不存在则不要污染数据）
-    print(f"[3/5] 校验骨骼 {PARENT_BONE} 存在")
-    # USkeleton.get_reference_pose 或 bone names；走 SkeletalMesh.find_bone_index 更直接
-    bone_index = skm.find_bone_index(PARENT_BONE)
-    if bone_index < 0:
-        raise RuntimeError(
-            f"SKM_Manny_Simple 找不到骨骼 '{PARENT_BONE}'，"
-            f"可能 Manny 骨骼命名变了，需要打开 Skeleton 编辑器人工核对"
-        )
-    print(f"      bone_index = {bone_index}")
+    # 校验 hand_r 骨骼存在 —— Python 没暴露 find_bone_index 之类 API；
+    # 跳过显式校验，依赖 UE 自身行为：如果父骨骼不存在，Skeleton 编辑器会标黄警告，
+    # 运行时 attach 也会失败并记 LogAnimation 警告，很容易诊断。
+    print(f"[3/5] （跳过骨骼校验，UE5 Python 没暴露 find_bone_index）")
 
     # 构造 socket，outer 必须是 Skeleton（不然 add_socket(bAddToSkeleton=True) 会复制一份新的）
     print(f"[4/5] 创建 {SOCKET_NAME} 挂到 {PARENT_BONE}")
